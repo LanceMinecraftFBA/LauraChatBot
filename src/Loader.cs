@@ -77,6 +77,13 @@ namespace LauraChatManager
                 for (int i = 0; i < Program.Users.Count; i++) {
                     Program.Users[i].Warns = await UsersDataTables.GetUserWarns(Program.Users[i].Id);
                 }
+                await Program.WriteDebbug("Loading users rating controls");
+                var controls = await RatingController.GetRatingControls();
+                for(int i = 0; i < Program.Users.Count; i++) {
+                    var userId = Program.Users[i].Id;
+                    if(controls.ContainsKey(userId))
+                        Program.Users[i].RatingControls = controls[userId];
+            }
             }
             return collections;
         }
