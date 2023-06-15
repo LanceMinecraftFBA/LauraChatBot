@@ -139,8 +139,10 @@ is_admin TINYINT NOT NULL
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
                     for(int i = 0; i < Program.Collections.CaptchaTemp[chat.Id].Count; i++)
-                        if(Program.Collections.CaptchaTemp[chat.Id][i].UserId == userId)
+                        if(Program.Collections.CaptchaTemp[chat.Id][i].UserId == userId) {
                             Program.Collections.CaptchaTemp[chat.Id][i].Attemps = attemps;
+                            break;
+                        }
                     await Program.WriteDebbug($"Table {chat.Id}_captchas has update for {userId}");
                     oper = true;
                 }
@@ -171,8 +173,10 @@ is_admin TINYINT NOT NULL
                     await mySql.CloseAsync();
                     await Program.WriteDebbug($"Table {chat.Id}_captchas has deletion for {userId}");
                     for(int i = 0; i < Program.Collections.CaptchaTemp[chat.Id].Count; i++)
-                        if(Program.Collections.CaptchaTemp[chat.Id][i].UserId == userId)
+                        if(Program.Collections.CaptchaTemp[chat.Id][i].UserId == userId) {
                             Program.Collections.CaptchaTemp[chat.Id].Remove(Program.Collections.CaptchaTemp[chat.Id][i]);
+                            break;
+                        }
                     oper = true;
                 }
                 catch(MySqlException exc) {
@@ -318,8 +322,10 @@ state_owner, gmt, receive_news, chat_state, st_expire) VALUES(
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
                     for(int i = 0; i < Program.Chats.Count; i++)
-                        if(Program.Chats[i].Id == chat.Id)
+                        if(Program.Chats[i].Id == chat.Id) {
                             Program.Chats[i] = temp;
+                            break;
+                        }
                     await Program.WriteDebbug($"Chat '{chat.Id}' has {diff.ArgsCount} changes");
 
                 }
@@ -337,6 +343,7 @@ state_owner, gmt, receive_news, chat_state, st_expire) VALUES(
             Program.Chats.Remove(chat);
             using(MySqlConnection mySql = new(Config.DB_URL + Config.ChatsData)) {
                 try {
+                    await mySql.OpenAsync();
                     var query = $"DELETE FROM chats_config WHERE chatId = {chat.Id}";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
