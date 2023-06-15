@@ -6,6 +6,7 @@ namespace LauraChatManager {
         public Dictionary<long, List<Captcha>> CaptchaTemp;
         public Dictionary<long, List<Report>> ChatsReportsStorages;
         public Dictionary<long, RandomCountSession> ActiveSessions;
+        public List<ReportStorageRequest> RsRequests;
         public List<Chat> TempConfigs;
         public List<Admin> Admins;
     }
