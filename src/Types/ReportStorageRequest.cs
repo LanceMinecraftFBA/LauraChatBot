@@ -2,6 +2,6 @@ namespace LauraChatManager.Types;
 
 public class ReportStorageRequest {
     public long TargetChat;
-    public long OutputCHat;
+    public long OutputChat;
     public DateTime Expire;
 }
