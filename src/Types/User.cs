@@ -9,6 +9,7 @@ namespace LauraChatManager.Types {
         public bool IsReceiving;
         public long Rating;
         public WarnUser Warns;
+        public List<RatingControl> RatingControls;
 
         public User() {
             IsBlocked = false;
