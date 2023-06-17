@@ -13,7 +13,7 @@ Laura Chat Manager is the most powerful chat moderator Telegram bot with RP func
 Laura can delete messages, that contains:
 - bad words🤬
 - URLs
-- NSWF content(photos, videos, GIFs and Stickers)
+- NSWF photos(powered by [nsfw-api](https://github.com/arnidan/nsfw-api))
 - Spam
 
 Bot can **close/open chat** to a given schedule🌙, **kick raiders🛡️**, if new chat members are in **Raider's database**, **clean chat by deleted accounts** and **delete messages by anonymous channels🧹**.
