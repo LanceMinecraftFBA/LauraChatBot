@@ -22,5 +22,9 @@ namespace LauraChatManager.Methods {
                     inp.Replace(args.ElementAt(i).Key, args.ElementAt(i).Value);
             return result;
         }
+        public static Time ParseTime(string inp) {
+            var time = inp.Split(":");
+            return new() { Hour = int.Parse(time[0]), Minute = int.Parse(time[1]) };
+        }
     }
 }

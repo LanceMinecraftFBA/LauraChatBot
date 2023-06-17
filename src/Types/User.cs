@@ -16,6 +16,7 @@ namespace LauraChatManager.Types {
             IsRaider = false;
             IsFbaEnemy = false;
             Rating = 0;
+            RatingControls = new();
         }
     }
 }

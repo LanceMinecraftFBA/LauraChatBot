@@ -62,6 +62,7 @@ namespace LauraChatManager
                 foreach(var chat in Program.Chats) {
                     var captchas = await ChatsDataTables.GetUsersCaptcha(chat.Id);
                     collections.CaptchaTemp.Add(chat.Id, captchas);
+                    collections.RsRequests = await ReportStorageReqStorage.GetReportStorageRequests();
                     if(chat.ReportStorage != 0) {
                         var reports_storage = await ChatsDataTables.GetChatsReports(chat.ReportStorage);
                         collections.ChatsReportsStorages.Add(chat.Id, reports_storage);
@@ -83,7 +84,7 @@ namespace LauraChatManager
                     var userId = Program.Users[i].Id;
                     if(controls.ContainsKey(userId))
                         Program.Users[i].RatingControls = controls[userId];
-            }
+                }
             }
             return collections;
         }
