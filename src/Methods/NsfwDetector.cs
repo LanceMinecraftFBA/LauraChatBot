@@ -15,7 +15,7 @@ public class NsfwDetector {
                 using (MultipartFormDataContent formData = new MultipartFormDataContent())
                 {
                     FileStream imageStream = File.OpenRead(path);
-                    formData.Add(new StreamContent(imageStream), "image", "image.jpg");
+                    formData.Add(new StreamContent(imageStream), "image", path);
 
                     HttpResponseMessage response = await httpClient.PostAsync(Config.LocalNswfDetector, formData);
                     string responseText = await response.Content.ReadAsStringAsync();
