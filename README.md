@@ -7,6 +7,15 @@ Laura Chat Manager is the most powerful chat moderator Telegram bot with RP func
 - WTelegramClient 3.2.2
 - Newtonsoft.Json
 
-## 🤔What bot does do?
+## 🤔What bot does do?(Concept)
 
-##### Bot in developing
+### 🛡️Chat moderation
+Laura can delete messages, that contains:
+- bad words🤬
+- URLs
+- NSWF content(photos, videos, GIFs and Stickers)
+- Spam
+
+Bot can **close/open chat** to a given schedule🌙, **kick raiders🛡️**, if new chat members are in **Raider's database**, **clean chat by deleted accounts** and **delete messages by anonymous channels🧹**.
+
+
