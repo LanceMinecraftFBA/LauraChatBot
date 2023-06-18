@@ -47,6 +47,7 @@ namespace LauraChatManager
 
         static async Task Main() {
             Client.OnUpdate += AccessHashReceiver;
+            await Client.LoginBotIfNeeded(Config.Token);
             Console.WriteLine("Creating logs...");
             await Loader.CreateLogs();
             await WriteDebbug("Loading Collections for boost from Databases...");
