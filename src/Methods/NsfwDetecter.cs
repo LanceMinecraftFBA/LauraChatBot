@@ -5,9 +5,9 @@ using LauraChatManager.Configuration;
 
 namespace LauraChatManager.Methods;
 
-public class NsfwDetector {
+public class NsfwDetecter {
     public static readonly string header = "multipart/form-data";
-  
+
     public static async Task<NsfwObject> GetNsfwScan(string path) {
         try {
             using (HttpClient httpClient = new HttpClient())
