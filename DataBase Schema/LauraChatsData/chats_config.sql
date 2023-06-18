@@ -21,6 +21,7 @@ CREATE TABLE `chats_config` (
   `gmt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'None',
   `receive_news` tinyint NOT NULL DEFAULT '1',
   `chat_state` varchar(255) NOT NULL DEFAULT 'State',
-  `st_expire` varchar(255) NOT NULL DEFAULT 'None'
+  `st_expire` varchar(255) NOT NULL DEFAULT 'None',
+  `not_comment` varchar(255) NOT NULL DEFAULT 'None'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
