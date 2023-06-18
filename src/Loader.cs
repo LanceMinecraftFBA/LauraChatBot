@@ -57,6 +57,12 @@ namespace LauraChatManager
         public static async Task<Collections> GetCollections() {
             var collections = new Collections();
             Program.Chats = await ChatsDataTables.GetChats();
+            collections.ActiveSessions = new();
+            collections.Admins = new();
+            collections.CaptchaTemp = new();
+            collections.ChatsReportsStorages = new();
+            collections.RsRequests = new();
+            collections.TempConfigs = new();
             await Program.WriteDebbug("Chats was filled");
             if(Program.Chats.Count > 0) {
                 foreach(var chat in Program.Chats) {
