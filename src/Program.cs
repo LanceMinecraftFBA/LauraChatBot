@@ -25,7 +25,7 @@ namespace LauraChatManager
     class Program
     {
         private static readonly TelegramBotClient bot = new(Config.Token);
-        private static readonly Client client = new(TApiConfig.ApiId, TApiConfig.ApiHash);
+        public static readonly Client Client = new(TApiConfig.ApiId, TApiConfig.ApiHash);
 
         public static bool HasException = false;
         public static readonly ReceiverOptions Options = new() { AllowedUpdates = new UpdateType[] { UpdateType.Message, UpdateType.ChannelPost, UpdateType.CallbackQuery }};
@@ -46,7 +46,7 @@ namespace LauraChatManager
         public static Process Process;
 
         static async Task Main() {
-            client.OnUpdate += AccessHashReceiver;
+            Client.OnUpdate += AccessHashReceiver;
             Console.WriteLine("Creating logs...");
             await Loader.CreateLogs();
             await WriteDebbug("Loading Collections for boost from Databases...");
@@ -166,7 +166,7 @@ Username - {Bot.Username}");
         static async Task AccessHashReceiver(IObject arg) {
             if (arg is not UpdatesBase updates) return;
             foreach(var update in updates.Chats) {
-                var ach_hash = client.GetAccessHashFor<Channel>(update.Value.ID);
+                var ach_hash = Client.GetAccessHashFor<Channel>(update.Value.ID);
                 if(!ChannelBase.ContainsKey(update.Value.ID) && ach_hash != 0) {
                     ChannelBase.Add(update.Value.ID, ach_hash);
                     await WriteDebbug($"Collected Access Hash '{ach_hash}' for Supergroup ID{update.Value.ID}(Telegram API Format)");
