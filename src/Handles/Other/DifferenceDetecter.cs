@@ -193,6 +193,13 @@ namespace LauraChatManager.Handles.Other {
                 args += $" cp_ma = {_new.MaxCaptchaAttemps}";
                 count += 1;
             }
+
+            if(_new.NotifComment != old.NotifComment) {
+                if(args != "SET")
+                    args += ",";
+                args += $" not_comment = '{_new.NotifComment}'";
+                count += 1;
+            }
             return new() { Args = args, ArgsCount = count };
         }
         public static DifferenceDetecter GetDifferenceForUser(User _new, User old) {
