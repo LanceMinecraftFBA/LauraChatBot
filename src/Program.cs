@@ -42,12 +42,13 @@ namespace LauraChatManager
 
         public static List<LauraChatManager.Types.User> Users = new();
         public static List<LauraChatManager.Types.Chat> Chats = new();
+        public static Dictionary<long, bool> UsersRaw = new();
 
         public static Process Process;
 
         static async Task Main() {
             await Client.LoginBotIfNeeded(Config.Token);
-            Helpers.Log += null;
+            Helpers.Log = null;
             Client.OnUpdate += AccessHashReceiver;
             Console.Clear();
             Console.WriteLine("Creating logs...");
