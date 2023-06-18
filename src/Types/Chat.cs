@@ -24,6 +24,7 @@ namespace LauraChatManager.Types {
         public bool IsReceive;
         public ChatState ChatState;
         public DateTime? StExpire;
+        public string? NotifComment;
 
         public Chat() {
             MaxWarns = 4;
