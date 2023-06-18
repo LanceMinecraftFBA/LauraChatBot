@@ -131,6 +131,7 @@ expire VARCHAR(255) NOT NULL)";
 
         public static async Task<WarnUser> GetUserWarns(long userId) {
             WarnUser user = new();
+            user.Warns = new();
             using(MySqlConnection mySql = new(Config.DB_URL + Config.UsersData)) {
                 try {
                     await mySql.OpenAsync();
