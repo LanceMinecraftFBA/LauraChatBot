@@ -83,6 +83,7 @@ namespace LauraChatManager
             if(Program.Users.Count > 0) {
                 for (int i = 0; i < Program.Users.Count; i++) {
                     Program.Users[i].Warns = await UsersDataTables.GetUserWarns(Program.Users[i].Id);
+                    Program.UsersRaw.Add(Program.Users[i].Id, Program.Users[i].IsBlocked);
                 }
                 await Program.WriteDebbug("Loading users rating controls");
                 var controls = await RatingController.GetRatingControls();
