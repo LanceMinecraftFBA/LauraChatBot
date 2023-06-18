@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using Telegram.Bot;
@@ -148,7 +148,7 @@ Username - {Bot.Username}");
                     if(Collections.RsRequests.Count > 0) {
                         for(int i = 0; i < 0; i++) {
                             if(Collections.RsRequests[i].Expire <= DateTime.UtcNow) {
-                                
+                                await ReportStorageReqStorage.DeleteReportStorageRequest(Collections.RsRequests[i]);
                             }
                         }
                     }
