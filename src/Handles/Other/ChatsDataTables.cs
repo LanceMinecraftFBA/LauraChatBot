@@ -263,6 +263,8 @@ is_admin TINYINT NOT NULL
                                         chat.Gmt = myReader[19].ToString();
                                     if(myReader[22].ToString() != "None")
                                         chat.StExpire = DateTime.ParseExact(myReader[22].ToString(), Config.StandartDateFormat, CultureInfo.InvariantCulture);
+                                    if(myReader[23].ToString() != "None")
+                                        chat.NotifComment = myReader[23].ToString();
 
                                     list.Add(chat);
                                 }
@@ -289,10 +291,10 @@ is_admin TINYINT NOT NULL
                     var query = $@"INSERT INTO chats_config(
 id, chatId, max_warns, antispam, as_active, detect_url, report_storage, captcha_button, nbw_active,
 rules, custom_hello, ch_sticker, punish, cp_ma, cp_minutes, night, state, settings_state,
-state_owner, gmt, receive_news, chat_state, st_expire) VALUES(
+state_owner, gmt, receive_news, chat_state, st_expire, not_comment) VALUES(
 0, {chatId}, {_default}, {_default}, {_default}, {_default}, {_default}, {_default}, {_default},
 {_default}, {_default}, {_default}, {_default}, {_default}, {_default}, {_default}, {_default},
-{_default}, {_default}, {_default}, {_default}, {_default}, {_default})";
+{_default}, {_default}, {_default}, {_default}, {_default}, {_default}, {_default})";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
