@@ -31,7 +31,7 @@ is_admin TINYINT NOT NULL
             using(MySqlConnection mySql = new(Config.DB_URL + Config.ChatsData)) {
                 try {
                     await mySql.OpenAsync();
-                    var query = $"SELECT * FROM {chatId}_captchas";
+                    var query = $"SELECT * FROM {chatId*-1}_captchas";
                     using(MySqlCommand myCmd = new(query, mySql)) {
                         using(MySqlDataReader myReader = (MySqlDataReader)await myCmd.ExecuteReaderAsync()) {
                             if(!myReader.HasRows)
@@ -76,7 +76,7 @@ is_admin TINYINT NOT NULL
             using(MySqlConnection mySql = new(Config.DB_URL + Config.ChatsData)) {
                 try {
                     await mySql.OpenAsync();
-                    var query = $"CREATE TABLE {chatId}_captchas{_values_captcha}";
+                    var query = $"CREATE TABLE {chatId*-1}_captchas{_values_captcha}";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -368,7 +368,7 @@ state_owner, gmt, receive_news, chat_state, st_expire, not_comment) VALUES(
                 try
                 {
                     await mySql.OpenAsync();
-                    var query = $"SELECT * FROM {chat_storage}_storage";
+                    var query = $"SELECT * FROM {chat_storage*-1}_storage";
                     using(MySqlCommand myCmd = new(query, mySql))
                         using(MySqlDataReader myReader = (MySqlDataReader)await myCmd.ExecuteReaderAsync())
                             if(myReader.HasRows != false)
@@ -399,7 +399,7 @@ state_owner, gmt, receive_news, chat_state, st_expire, not_comment) VALUES(
                 try
                 {
                     await mySql.OpenAsync();
-                    var query = $"CREATE TABLE {chat_storage}_storage{_values_reports}";
+                    var query = $"CREATE TABLE {chat_storage*-1}_storage{_values_reports}";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -417,7 +417,7 @@ state_owner, gmt, receive_news, chat_state, st_expire, not_comment) VALUES(
             using(MySqlConnection mySql = new(Config.DB_URL + Config.LauraReportsStorages)) {
                 try {
                     await mySql.OpenAsync();
-                    var query = $"DROP TABLE {chat.ReportStorage}_storage";
+                    var query = $"DROP TABLE {chat.ReportStorage*-1}_storage";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -463,7 +463,7 @@ state_owner, gmt, receive_news, chat_state, st_expire, not_comment) VALUES(
             using(MySqlConnection mySql = new(Config.DB_URL + Config.LauraReportsStorages)) {
                 try {
                     await mySql.OpenAsync();
-                    var query = $"DELETE FROM {report_storage}_storage WHERE message_id = {form.MesssageId}";
+                    var query = $"DELETE FROM {report_storage*-1}_storage WHERE message_id = {form.MesssageId}";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
