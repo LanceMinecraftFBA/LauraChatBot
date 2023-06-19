@@ -31,7 +31,7 @@ expire VARCHAR(255) NOT NULL)";
                                     var temp = new User(){Id = long.Parse(myReader[1].ToString()), IsBlocked = (myReader[3].ToString() != "0"), IsRaider = (myReader[5].ToString() != "0"), IsFbaEnemy = (myReader[6].ToString() != "0"), Rating = long.Parse(myReader[7].ToString()), IsReceiving = (myReader[8].ToString() != "0")};
                                     if(myReader[2].ToString() != "None")
                                         temp.Nickname = myReader[2].ToString();
-                                    if(myReader[4].ToString() != "0")
+                                    if(myReader[3].ToString() != "0")
                                         temp.IsBlocked = true;
                                     if(myReader[4].ToString() != "None")
                                         temp.BlockEnd = DateTime.ParseExact(myReader[4].ToString(), Config.StandartDateFormat, CultureInfo.InvariantCulture);
