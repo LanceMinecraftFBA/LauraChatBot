@@ -43,6 +43,7 @@ namespace LauraChatManager
         public static List<LauraChatManager.Types.User> Users = new();
         public static List<LauraChatManager.Types.Chat> Chats = new();
         public static Dictionary<long, bool> UsersRaw = new();
+        public static List<long> ChatsRaw = new();
 
         public static Process Process;
 
