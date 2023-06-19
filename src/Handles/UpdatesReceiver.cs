@@ -11,9 +11,14 @@ namespace LauraChatManager.Handles {
             }
             switch (update.Type) {
                 case UpdateType.Message:
+                    TimeSpan time =  DateTime.UtcNow - update.Message.Date;
+                    if(time.TotalMinutes >= 5)
+                        break;
                     await LauraChatManager.Events.Message.InvokeMessage(bot, update.Message);
                     break;
                 case UpdateType.ChannelPost:
+                    TimeSpan time1 = DateTime.UtcNow - update.Message.Date ;
+                    if(time1.TotalMinutes >= 5)
                     await LauraChatManager.Events.Message.InvokeMessage(bot, update.ChannelPost);
                     break;
                 case UpdateType.CallbackQuery:
