@@ -49,7 +49,8 @@ namespace LauraChatManager
 
         static async Task Main() {
             await Client.LoginBotIfNeeded(Config.Token);
-            Helpers.Log = null;
+            Client.CollectAccessHash = true;
+            Helpers.Log = SkipApiLog;
             Client.OnUpdate += AccessHashReceiver;
             Console.Clear();
             Console.WriteLine("Creating logs...");
@@ -184,7 +185,9 @@ Username - {Bot.Username}");
                 await WriteLarx($"Ping DataBase: {DbPing}");
             }
         }
-
+        
+        static async void SkipApiLog(int arg1, string arg2) {}
+        
         static async Task AccessHashReceiver(IObject arg) {
             if (arg is not UpdatesBase updates) return;
             foreach(var update in updates.Chats) {
