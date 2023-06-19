@@ -6,7 +6,8 @@ namespace LauraChatManager.Handles.Other {
             await Program.WriteDebbug($"Processing deletion chat's data for '{chat.Id}'");
             await ChatsDataTables.DeleteUsersCaptchaTable(chat.Id);
             await ChatsDataTables.DeleteChatConfig(chat);
-            await ChatsDataTables.DeleteReportChatStorage(chat);
+            if(chat.ReportStorage != 0)
+                await ChatsDataTables.DeleteReportChatStorage(chat);
         }
         public static async Task DeleteUserData(User user){
             await Program.WriteDebbug($"Processing deletion user's data for '{user.Id}'");
