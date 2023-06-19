@@ -105,7 +105,7 @@ is_admin TINYINT NOT NULL
                 try {
                     await mySql.OpenAsync();
                     var expire = DateTime.UtcNow.AddMinutes(chat.Minutes);
-                    var query = $"INSERT INTO {chat.Id}_captchas(id, userId, expire, attemps, type, solution) VALUES(0, {userId}, '{expire.ToString(Config.StandartDateFormat, CultureInfo.InvariantCulture)}', {chat.MaxCaptchaAttemps}, '{chat.CaptchaButton.ToString()}', '{sol_val}')";
+                    var query = $"INSERT INTO {chat.Id*-1}_captchas(id, userId, expire, attemps, type, solution) VALUES(0, {userId}, '{expire.ToString(Config.StandartDateFormat, CultureInfo.InvariantCulture)}', {chat.MaxCaptchaAttemps}, '{chat.CaptchaButton.ToString()}', '{sol_val}')";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -134,7 +134,7 @@ is_admin TINYINT NOT NULL
                 }
                 try {
                     await mySql.OpenAsync();
-                    var query = $"UPDATE {chat.Id}_captchas SET attemps = {attemps} WHERE userId = {userId}";
+                    var query = $"UPDATE {chat.Id*-1}_captchas SET attemps = {attemps} WHERE userId = {userId}";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -167,7 +167,7 @@ is_admin TINYINT NOT NULL
                 }
                 try {
                     await mySql.OpenAsync();
-                    var query = $"DELETE FROM {chat.Id}_captchas WHERE userId = {userId}";
+                    var query = $"DELETE FROM {chat.Id*-1}_captchas WHERE userId = {userId}";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -196,7 +196,7 @@ is_admin TINYINT NOT NULL
             using(MySqlConnection mySql = new(Config.DB_URL + Config.ChatsData)) {
                 try {
                     await mySql.OpenAsync();
-                    var query = $"DROP TABLE {chatId}_captchas";
+                    var query = $"DROP TABLE {chatId*-1}_captchas";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
                     await mySql.CloseAsync();
@@ -443,7 +443,7 @@ state_owner, gmt, receive_news, chat_state, st_expire, not_comment) VALUES(
                         isAdmin = 1;
                     if(form.Reason != null)
                         reason = $"'{form.Reason}'";
-                    var query = @$"INSERT INTO {chat.ReportStorage}_storage(id, target_user_id, output_user_id, message_id, reason, stamp, is_admin) VALUES(
+                    var query = @$"INSERT INTO {chat.ReportStorage*-1}_storage(id, target_user_id, output_user_id, message_id, reason, stamp, is_admin) VALUES(
 0, {form.TargetUserId}, {form.OutputUserId}, {form.MesssageId}, {reason}, '{DateTime.UtcNow.ToString(Config.StandartDateFormat, CultureInfo.InvariantCulture)}', {isAdmin})";
                     using(MySqlCommand myCmd = new(query, mySql))
                         await myCmd.ExecuteNonQueryAsync();
