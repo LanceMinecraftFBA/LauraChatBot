@@ -149,7 +149,24 @@ Username - {Bot.Username}");
                             }
                         }
                     }
-
+                    
+                    if(Collections.CaptchaTemp.Count > 0) {
+                        for(int i = 0; i < Collections.CaptchaTemp.Count; i++) {
+                            for(int j = 0; j < Collections.CaptchaTemp.ElementAt(i).Value.Count; j++) {
+                                if(Collections.CaptchaTemp.ElementAt(i).Value[j].Expire <= DateTime.UtcNow) {
+                                    var chat = new Types.Chat();
+                                    for(int k = 0; k < Program.Chats.Count; i++) {
+                                        if(Program.Chats[i].Id == Program.ChatsRaw[i]) {
+                                            chat = Program.Chats[i];
+                                            break;
+                                        }
+                                    }
+                                    await ChatsDataTables.DeleteUserCaptchaInTable(chat, Collections.CaptchaTemp.ElementAt(i).Value[j].UserId)
+                                }
+                            }
+                        }
+                    }
+                    
                     if(Collections.RsRequests.Count > 0) {
                         for(int i = 0; i < 0; i++) {
                             if(Collections.RsRequests[i].Expire <= DateTime.UtcNow) {
