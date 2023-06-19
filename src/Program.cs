@@ -161,7 +161,7 @@ Username - {Bot.Username}");
                                             break;
                                         }
                                     }
-                                    await ChatsDataTables.DeleteUserCaptchaInTable(chat, Collections.CaptchaTemp.ElementAt(i).Value[j].UserId)
+                                    await ChatsDataTables.DeleteUserCaptchaInTable(chat, Collections.CaptchaTemp.ElementAt(i).Value[j].UserId);
                                 }
                             }
                         }
