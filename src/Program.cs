@@ -28,6 +28,7 @@ namespace LauraChatManager
         public static readonly Client Client = new(TApiConfig.ApiId, TApiConfig.ApiHash);
 
         public static bool HasException = false;
+        public static bool Debug = false;
         public static readonly ReceiverOptions Options = new() { AllowedUpdates = new UpdateType[] { UpdateType.Message, UpdateType.ChannelPost, UpdateType.CallbackQuery }};
         public static User Bot;
         public static Dictionary<long, long> ChannelBase = new();
@@ -48,9 +49,13 @@ namespace LauraChatManager
         public static Process Process;
 
         static async Task Main() {
+            #if DEBUG
+            Debug = true;
+            #endif
+            
             await Client.LoginBotIfNeeded(Config.Token);
             Client.CollectAccessHash = true;
-            Helpers.Log = SkipApiLog;
+            Helpers.Log = null;
             Client.OnUpdate += AccessHashReceiver;
             Console.Clear();
             Console.WriteLine("Creating logs...");
@@ -77,6 +82,7 @@ Username - {Bot.Username}");
             while(true) {
                 NextLarxUpdate = DateTime.UtcNow.AddHours(1);
                 while((NextLarxUpdate - DateTime.UtcNow).TotalMinutes > 0) {
+                    Events.Message.NewsSender();
                     if(Users.Count > 0) {
                         for(int i = 0; i < Users.Count; i++) {
                             if(Users[i].Warns.Warns.Count > 0) {
@@ -214,6 +220,8 @@ Username - {Bot.Username}");
             Console.ForegroundColor = ConsoleColor.White;
         }
         public static async Task WriteDebbug(string text) {
+            if(!Debug)
+                return;
             var log = DateTime.UtcNow.ToString(Config.StandartDateFormat, CultureInfo.InvariantCulture) + " [DEBUG]: " + text;
             await Loader.UpdateDebugs(log);
             Console.ForegroundColor = ConsoleColor.Magenta;
