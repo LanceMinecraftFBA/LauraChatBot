@@ -55,7 +55,7 @@ namespace LauraChatManager
             
             await Client.LoginBotIfNeeded(Config.Token);
             Client.CollectAccessHash = true;
-            Helpers.Log = null;
+            Helpers.Log = SkipApiLog;
             Client.OnUpdate += AccessHashReceiver;
             Console.Clear();
             Console.WriteLine("Creating logs...");
