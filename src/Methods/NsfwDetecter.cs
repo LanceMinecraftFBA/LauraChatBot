@@ -10,14 +10,16 @@ public class NsfwDetecter {
 
     public static async Task<NsfwObject> GetNsfwScan(string path) {
         try {
-            using (HttpClient httpClient = new HttpClient())
+            HttpClientHandler handler = new();
+            handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+            using (HttpClient httpClient = new HttpClient(handler))
             {
                 using (MultipartFormDataContent formData = new MultipartFormDataContent())
                 {
                     FileStream imageStream = File.OpenRead(path);
-                    formData.Add(new StreamContent(imageStream), "image", path);
+                    formData.Add(new StreamContent(imageStream), "image", "image.jpg");
 
-                    HttpResponseMessage response = await httpClient.PostAsync(Config.LocalNswfDetector, formData);
+                    HttpResponseMessage response = await httpClient.PostAsync(Config.LocalNswfDetector + "/classify", formData);
                     string responseText = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<NsfwObject>(responseText);
                 }
