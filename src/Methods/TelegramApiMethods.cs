@@ -102,12 +102,12 @@ public class TelegramApiMethods {
                 return new();
             }
         }
-        public static async Task<User> GetUserByUsernameAsync(string username, WTelegram.Client client)
+        public static async Task<User> GetUserByUsernameAsync(string username)
         {
             try
             {
                 await Program.Client.LoginBotIfNeeded(Configuration.Config.Token);
-                var user = await client.Contacts_ResolveUsername(username);
+                var user = await Program.Client.Contacts_ResolveUsername(username);
                 return user.User;
             }
             catch(Exception exc)
