@@ -11,11 +11,13 @@ namespace LauraChatManager.Events {
         private static ITelegramBotClient Bot;
         public static async Task InvokeMessage(ITelegramBotClient bot, Telegram.Bot.Types.Message msg) {
             Bot = bot;
-            if(msg.Chat.Id == msg.From.Id)
-                await UserHandler.Invoke(bot, msg);
-            if(msg.Chat.Id != msg.From.Id)
-                await ChatHandler.Invoke(bot, msg);
-            if(msg.Chat.Id == Configuration.Config.ChannelId && msg.Chat.Type == ChatType.Channel)
+            if(msg.Chat.Type != ChatType.Channel) {
+                if(msg.Chat.Id == msg.From.Id)
+                    await UserHandler.Invoke(bot, msg);
+                if(msg.Chat.Id != msg.From.Id)
+                    await ChatHandler.Invoke(bot, msg);
+            }
+            else if(msg.Chat.Id == Configuration.Config.ChannelId)
                 switch(msg.Type){
                     case MessageType.Text:
                         News.Add(new() {Text = msg.Text, PostID = msg.MessageId});
@@ -44,29 +46,31 @@ namespace LauraChatManager.Events {
                         if(Program.Users[j].IsReceiving)
                         {
                             if(news.Photo != null)
-                                await Bot.SendPhotoAsync(Program.Chats[j].Id, new InputFileId(news.Photo), caption:  $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendPhotoAsync(Program.Chats[j].Id, new InputFileId(news.Photo), caption:  $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else if(news.Video != null)
-                                await Bot.SendVideoAsync(Program.Chats[j].Id, new InputFileId(news.Video), caption: $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendVideoAsync(Program.Chats[j].Id, new InputFileId(news.Video), caption: $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else if(news.File != null)
-                                await Bot.SendDocumentAsync(Program.Chats[j].Id, new InputFileId(news.File), caption: $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendDocumentAsync(Program.Chats[j].Id, new InputFileId(news.File), caption: $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else if(news.Audio != null)
-                                await Bot.SendAudioAsync(Program.Chats[j].Id, new InputFileId(news.Audio), caption: $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendAudioAsync(Program.Chats[j].Id, new InputFileId(news.Audio), caption: $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else
-                                await Bot.SendTextMessageAsync(Program.Users[j].Id, $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")), disableWebPagePreview: true);
+                                await Bot.SendTextMessageAsync(Program.Users[j].Id, $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")), disableWebPagePreview: true);
+                            await Task.Delay(450);
                         }
                     }
                     for(int j = 0; j < Program.Chats.Count; j++){
                         if(Program.Chats[j].IsReceive) {
                             if(news.Photo != null)
-                                await Bot.SendPhotoAsync(Program.Chats[j].Id, new InputFileId(news.Photo), caption:  $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendPhotoAsync(Program.Chats[j].Id, new InputFileId(news.Photo), caption:  $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else if(news.Video != null)
-                                await Bot.SendVideoAsync(Program.Chats[j].Id, new InputFileId(news.Video), caption: $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendVideoAsync(Program.Chats[j].Id, new InputFileId(news.Video), caption: $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else if(news.File != null)
-                                await Bot.SendDocumentAsync(Program.Chats[j].Id, new InputFileId(news.File), caption: $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendDocumentAsync(Program.Chats[j].Id, new InputFileId(news.File), caption: $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else if(news.Audio != null)
-                                await Bot.SendAudioAsync(Program.Chats[j].Id, new InputFileId(news.Audio), caption: $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")));
+                                await Bot.SendAudioAsync(Program.Chats[j].Id, new InputFileId(news.Audio), caption: $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")));
                             else
-                                await Bot.SendTextMessageAsync(Program.Chats[j].Id, $"<b>Говорит <a href=\"t.me/FBA_Studio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl($"t.me/FBA_Studio/{news.PostID}", "Перейти к посту")), disableWebPagePreview: true);
+                                await Bot.SendTextMessageAsync(Program.Chats[j].Id, $"<b>Говорит <a href=\"t.me/FBAStudio\">FBA Studio</a>:</b>\n{news.Text}", parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl("Перейти к посту", $"t.me/FBAStudio/{news.PostID}")), disableWebPagePreview: true);
+                            await Task.Delay(450);
                         }
                     }
                 }
