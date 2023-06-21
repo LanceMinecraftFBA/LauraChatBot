@@ -4,7 +4,6 @@ namespace LauraChatManager.Buttons;
 
 public class Buttons {
     public static ReplyKeyboardMarkup GetUserMenu() {
-        KeyboardButtonRequestChat chat = new();
         var buttons = new ReplyKeyboardMarkup(new[] {
                 new KeyboardButton[] {
                     new KeyboardButton("О боте🧸"),
