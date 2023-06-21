@@ -15,7 +15,7 @@ namespace LauraChatManager.Events {
                 await UserHandler.Invoke(bot, msg);
             if(msg.Chat.Id != msg.From.Id)
                 await ChatHandler.Invoke(bot, msg);
-            if(msg.Chat.Id == Configuration.Config.ChannelId)
+            if(msg.Chat.Id == Configuration.Config.ChannelId && msg.Chat.Type == ChatType.Channel)
                 switch(msg.Type){
                     case MessageType.Text:
                         News.Add(new() {Text = msg.Text, PostID = msg.MessageId});
