@@ -22,4 +22,9 @@ namespace LauraChatManager.Configuration
         public static readonly int ApiId = 0;
         public static readonly string ApiHash = "api hash for telegram client";
     }
+    public class QiwiConfig {
+        public string PublicKey = "public key";
+        public string SecretKey = "secret key";
+        public string Color = "theme code";
+    }
 }
