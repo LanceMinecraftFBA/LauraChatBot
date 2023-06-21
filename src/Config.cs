@@ -23,8 +23,8 @@ namespace LauraChatManager.Configuration
         public static readonly string ApiHash = "api hash for telegram client";
     }
     public class QiwiConfig {
-        public string PublicKey = "public key";
-        public string SecretKey = "secret key";
-        public string Color = "theme code";
+        public static string PublicKey = "public key";
+        public static string SecretKey = "secret key";
+        public static string Color = "theme code";
     }
 }
