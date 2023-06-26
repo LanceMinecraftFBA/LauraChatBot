@@ -16,6 +16,7 @@ namespace LauraChatManager.Configuration
         public static readonly string LauraReportsStorages = "LauraReportsStorages";
         public static readonly string LocalNswfDetector = "http://example.com:3000";
         public static readonly long ChannelId = 0;
+        public static readonly long ChStickerStorage = 0;
     }
 
     public class TApiConfig {
