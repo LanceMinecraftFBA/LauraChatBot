@@ -6,6 +6,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
+using Qiwi.BillPayments.Client;
+using Qiwi.BillPayments.Model;
 
 using Config = LauraChatManager.Configuration.Config;
 using TApiConfig = LauraChatManager.Configuration.TApiConfig;
@@ -26,7 +28,8 @@ namespace LauraChatManager
     {
         private static readonly TelegramBotClient bot = new(Config.Token);
         public static readonly Client Client = new(TApiConfig.ApiId, TApiConfig.ApiHash);
-
+        
+        public static BillPaymentsClient QiwiClient = BillPaymentsClientFactory.Create(Configuration.QiwiConfig.SecretKey);
         public static bool HasException = false;
         public static bool Debug = false;
         public static readonly ReceiverOptions Options = new() { AllowedUpdates = new UpdateType[] { UpdateType.Message, UpdateType.ChannelPost, UpdateType.CallbackQuery }};
@@ -76,7 +79,11 @@ Username - {Bot.Username}");
             await WriteLarx($"RAM Usage: {RamUsage}");
             Ping = new System.Net.NetworkInformation.Ping().Send("api.telegram.org").RoundtripTime;
             await WriteLarx($"Ping: {Ping}");
-            DbPing = new System.Net.NetworkInformation.Ping().Send("45.89.52.134").RoundtripTime;
+            var pingDb = new System.Net.NetworkInformation.Ping().Send("db");
+            if(pingDb.Status != System.Net.NetworkInformation.IPStatus.Success)
+                DbPing = 99999;
+            else
+                DbPing = pingDb.RoundtripTime;
             await WriteLarx($"Ping DataBase: {DbPing}");
 
             while(true) {
@@ -187,7 +194,11 @@ Username - {Bot.Username}");
                 await WriteLarx($"RAM Usage: {RamUsage}");
                 Ping = new System.Net.NetworkInformation.Ping().Send("api.telegram.org").RoundtripTime;
                 await WriteLarx($"Ping: {Ping}");
-                DbPing = new System.Net.NetworkInformation.Ping().Send("45.89.52.134").RoundtripTime;
+                pingDb = new System.Net.NetworkInformation.Ping().Send("db");
+                if(pingDb.Status != System.Net.NetworkInformation.IPStatus.Success)
+                    DbPing = 99999;
+                else
+                    DbPing = pingDb.RoundtripTime;
                 await WriteLarx($"Ping DataBase: {DbPing}");
             }
         }
