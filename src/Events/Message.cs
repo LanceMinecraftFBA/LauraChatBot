@@ -23,16 +23,20 @@ namespace LauraChatManager.Events {
                         News.Add(new() {Text = msg.Text, PostID = msg.MessageId});
                         break;
                     case MessageType.Photo:
-                        News.Add(new() {Text = msg.Text, PostID = msg.MessageId, Photo = msg.Photo[0].FileId});
+                        if(msg.Caption != null)
+                            News.Add(new() {Text = msg.Caption, PostID = msg.MessageId, Photo = msg.Photo[0].FileId});
                         break;
                     case MessageType.Video:
-                        News.Add(new() {Text = msg.Text, PostID = msg.MessageId, Video = msg.Video.FileId});
+                        if(msg.Caption != null)
+                            News.Add(new() {Text = msg.Caption, PostID = msg.MessageId, Video = msg.Video.FileId});
                         break;
                     case MessageType.Document:
-                        News.Add(new() {Text = msg.Text, PostID = msg.MessageId, File = msg.Document.FileId});
+                        if(msg.Caption != null)
+                            News.Add(new() {Text = msg.Caption, PostID = msg.MessageId, File = msg.Document.FileId});
                         break;
                     case MessageType.Audio:
-                        News.Add(new() {Text = msg.Text, PostID = msg.MessageId, File = msg.Audio.FileId});
+                        if(msg.Caption != null)
+                            News.Add(new() {Text = msg.Caption, PostID = msg.MessageId, File = msg.Audio.FileId});
                         break;
                 }
         }
