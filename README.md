@@ -7,7 +7,7 @@ Laura Chat Manager is the most powerful chat moderator Telegram bot with RP func
 - WTelegramClient 3.2.2
 - Newtonsoft.Json
 - Qiwi.BillPayments
-- System.Drawing.Common
+- SixLabors.ImageSharp
 
 ## 🤔What bot does do?(Concept)
 
