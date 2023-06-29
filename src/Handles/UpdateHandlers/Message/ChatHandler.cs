@@ -16,6 +16,8 @@ using SixLabors.ImageSharp.Processing;
 
 namespace LauraChatManager.Handles.UpdateHandlers.Message {
     public class ChatHandler {
+        private static readonly ChatPermissions mutePermissions = new() { CanSendMessages = false, CanSendAudios = false, CanSendDocuments = false, CanSendPhotos = false, CanSendVideos = false, CanSendVideoNotes = false, CanSendPolls = false, CanSendVoiceNotes = false, CanSendOtherMessages = false };
+        
         public static async Task Invoke(ITelegramBotClient bot, Telegram.Bot.Types.Message msg) {
             if(msg.Chat.Type == ChatType.Channel) {
                 await Program.WriteDebbug($"{msg.Chat.Id} | {msg.Text}");
@@ -538,9 +540,9 @@ namespace LauraChatManager.Handles.UpdateHandlers.Message {
                                     disableWebPagePreview: true);
                             }
                             else {
-                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMinutes(15), permissions: new() { CanSendMessages = false });
+                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMinutes(15), permissions: mutePermissions);
                                 await bot.SendTextMessageAsync(chat.Id,
-                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на 15 минут</b>\nЗа это время ог должен успокоиться😇",
+                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на 15 минут</b>\nЗа это время он должен успокоиться😇",
                                     replyToMessageId: msg.MessageId,
                                     parseMode: ParseMode.Html,
                                     disableWebPagePreview: true);
@@ -601,12 +603,17 @@ namespace LauraChatManager.Handles.UpdateHandlers.Message {
                                     disableWebPagePreview: true);
                             }
                             else {
-                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMinutes(15), permissions: new() { CanSendMessages = false });
-                                await bot.SendTextMessageAsync(chat.Id,
-                                    text: $"<b>✅Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> теперь может свободно общаться</b>\nНадеюсь ссориться с кем-то он будет в личке🙂",
-                                    replyToMessageId: msg.MessageId,
-                                    parseMode: ParseMode.Html,
-                                    disableWebPagePreview: true);
+                                try {
+                                    await bot.PromoteChatMemberAsync(chat.Id, replyUser.Id);
+                                }
+                                catch(ApiRequestException exc) {
+                                    if(exc.Message.Contains("bots can't add new chat members"))
+                                        await bot.SendTextMessageAsync(chat.Id,
+                                            text: $"<b>✅Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> теперь может свободно общаться</b>\nНадеюсь ссориться с кем-то он будет в личке🙂",
+                                            replyToMessageId: msg.MessageId,
+                                            parseMode: ParseMode.Html,
+                                            disableWebPagePreview: true);
+                                }
                             }
                         }
                     }
@@ -815,7 +822,7 @@ namespace LauraChatManager.Handles.UpdateHandlers.Message {
                             parseMode: ParseMode.Html);
                     }
                     else {
-                        var userTemp = await TelegramApiMethods.GetUserByUsernameAsync(text.ToLower().Split(".разбан @")[1].Split(" ")[0]);
+                        var userTemp = await TelegramApiMethods.GetUserByUsernameAsync(text.ToLower().Split(".размут @")[1].Split(" ")[0]);
                         if(userTemp == null) {
                             await bot.SendTextMessageAsync(chatId: chat.Id,
                                 text: "<b>❗️Данный пользователь не найден по юзернейму!</b>",
@@ -844,18 +851,21 @@ namespace LauraChatManager.Handles.UpdateHandlers.Message {
                                 else {
                                     try {
                                         await bot.PromoteChatMemberAsync(chat.Id, userTemp.ID);
-                                        await bot.SendTextMessageAsync(chat.Id,
-                                            text: $"<b>✅Участник чата <b><a href=\"tg://user?id={userTemp.ID}\">{userTemp.first_name}</a></b> теперь может свободно общаться</b>\nНадеюсь ссориться с кем-то он будет в личке🙂",
-                                            replyToMessageId: msg.MessageId,
-                                            parseMode: ParseMode.Html,
-                                            disableWebPagePreview: true);
                                     }
                                     catch(Exception exc) {
-                                        await bot.SendTextMessageAsync(chat.Id,
-                                            text: $"⚠️Возникла непредвиденная ошибка: <code>{exc.Message}</code>\nВозможно данный пользователь не был участником чата",
-                                            replyToMessageId: msg.MessageId,
-                                            parseMode: ParseMode.Html);
-                                        await Program.WriteError($"TelegramBotApi in '.размут @' | ban by username: {exc.Message}");
+                                        if(exc.Message.Contains("bots can't add new chat members"))
+                                            await bot.SendTextMessageAsync(chat.Id,
+                                                text: $"<b>✅Участник чата <b><a href=\"tg://user?id={userTemp.ID}\">{userTemp.first_name}</a></b> теперь может свободно общаться</b>\nНадеюсь ссориться с кем-то он будет в личке🙂",
+                                                replyToMessageId: msg.MessageId,
+                                                parseMode: ParseMode.Html,
+                                                disableWebPagePreview: true);
+                                        else {
+                                            await Program.WriteError($"TelegramBotApi in '.размут @' | ban by username: {exc.Message}");
+                                            await bot.SendTextMessageAsync(chat.Id,
+                                                text: $"⚠️Возникла непредвиденная ошибка: <code>{exc.Message}</code>\nВозможно данный пользователь не был участником чата",
+                                                replyToMessageId: msg.MessageId,
+                                                parseMode: ParseMode.Html);                                       
+                                        }
                                     }
                                 }
                             }
@@ -864,7 +874,193 @@ namespace LauraChatManager.Handles.UpdateHandlers.Message {
                                 await bot.SendTextMessageAsync(chat.Id,
                                     text: $"⚠️Возникла непредвиденная ошибка: <code>{exc.Message}</code>\nВозможно данный пользователь не был участником чата",
                                     replyToMessageId: msg.MessageId,
-                                    parseMode: ParseMode.Html);
+                                    parseMode: ParseMode.Html);    
+                            }
+                        }
+                    }
+                }
+                if(text.ToLower().StartsWith(".мут ")) {
+                    ChatMember botAdmin = await bot.GetChatMemberAsync(chat.Id, Program.Bot.Id);
+                    ChatMember outputMember = await bot.GetChatMemberAsync(chat.Id, user.Id);
+
+                    var outputMemberStatus = outputMember.Status;
+                    if(outputMember.Status == ChatMemberStatus.Creator)
+                        outputMemberStatus = ChatMemberStatus.Administrator;
+                    
+                    if(botAdmin.Status != ChatMemberStatus.Administrator) {
+                        await bot.SendTextMessageAsync(chatId: chat.Id,
+                            text: "❕Я не являюсь администратором чата, поэтому я не могу совершить это действие",
+                            replyToMessageId: msg.MessageId);
+                    }
+                    else if(outputMemberStatus != ChatMemberStatus.Administrator) {
+                        await bot.SendTextMessageAsync(chatId: chat.Id,
+                            text: "<b>🚫Команда отклонена:</b> у вас недостаточно прав",
+                            replyToMessageId: msg.MessageId,
+                            parseMode: ParseMode.Html);
+                    }
+                    else if(chat.Type != ChatType.Supergroup) {
+                        await bot.SendTextMessageAsync(chatId: chat.Id,
+                            text: "<b>🚫Команда отклонена:</b> чат не является супергруппой",
+                            replyToMessageId: msg.MessageId,
+                            parseMode: ParseMode.Html);
+                    }
+                    else {
+                        if(msg.ReplyToMessage == null) {
+                            await bot.SendTextMessageAsync(chatId: chat.Id,
+                                text: "<b>❗️Вы не указали участника, которого вы хотели заглушить!</b>\nЯ не способна глушить рандомного человека🙃",
+                                replyToMessageId: msg.MessageId,
+                                parseMode: ParseMode.Html);
+                        }
+                        else {
+                            var replyUser = msg.ReplyToMessage.From;
+                            var targetUser = await bot.GetChatMemberAsync(chat.Id, replyUser.Id);
+                    
+                            var targetUserAdministrator = targetUser.Status;
+                            if(targetUser.Status == ChatMemberStatus.Creator)
+                                targetUserAdministrator = ChatMemberStatus.Administrator;
+                            
+                            if(replyUser.Id == Program.Bot.Id)
+                                await bot.SendTextMessageAsync(chat.Id,
+                                text: "Если я заглушу себя, то как пользователь бота будет потом использовать меня🤔?",
+                                replyToMessageId: msg.MessageId);
+                            
+                            else if(targetUser.Status == ChatMemberStatus.Administrator) {
+                                await bot.SendTextMessageAsync(chatId: chat.Id,
+                                    text: $"<b>Заглушить <a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> я не могу, поскольку он администратор😑.\n\nСвои отношения обсуждайте в личках😠!",
+                                    replyToMessageId: msg.MessageId,
+                                    parseMode: ParseMode.Html,
+                                    disableWebPagePreview: true);
+                            }
+                            else {
+                                var args = text.ToLower().Split(' ');
+                                if(args.Length < 3) {
+                                    await bot.SendTextMessageAsync(chat.Id,
+                                        text: $"<b>❕Недостаточно аргументов, чтобы я могла зашлушить его</b>",
+                                        replyToMessageId: msg.MessageId,
+                                        parseMode: ParseMode.Html,
+                                        disableWebPagePreview: true);
+                                }
+                                else {
+                                    int times = 0;
+                                    if(!int.TryParse(args[1], out times)) {
+                                        await bot.SendTextMessageAsync(chat.Id,
+                                            text: $"<b>❗️Вы не указали длительность глушения</b>",
+                                            replyToMessageId: msg.MessageId,
+                                            parseMode: ParseMode.Html,
+                                            disableWebPagePreview: true);
+                                    }
+                                    else {
+                                        switch (args[2]) {
+                                            case "минут":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMinutes(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} минут</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "минуты":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMinutes(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} минуты</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "минуту":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMinutes(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} минуту</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                                
+                                            case "час":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddHours(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} час</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "часа":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddHours(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} часа</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "часов":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddHours(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} часов</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            
+                                            case "день":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddDays(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} день</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "дня":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddDays(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} дня</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "дней":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddDays(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} дней</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                                
+                                            case "месяц":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMonths(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} месяц</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "месяца":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMonths(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} месяца</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            case "месяцев":
+                                                await bot.RestrictChatMemberAsync(chat.Id, replyUser.Id, untilDate: DateTime.UtcNow.AddMonths(times), permissions: mutePermissions);
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>🔇Участник чата <b><a href=\"tg://user?id={replyUser.Id}\">{replyUser.FirstName}</a></b> был заглушен на {times} месяцев</b>\nЗа это время он должен успокоиться😇",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                            
+                                            default:
+                                                await bot.SendTextMessageAsync(chat.Id,
+                                                    text: $"<b>\"{args[2]}\" не является временем❌</b>",
+                                                    replyToMessageId: msg.MessageId,
+                                                    parseMode: ParseMode.Html,
+                                                    disableWebPagePreview: true);
+                                                break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
